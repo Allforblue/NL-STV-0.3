@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any, Union, Literal
 from enum import Enum
 
 
@@ -36,7 +36,7 @@ class InteractionPayload(BaseModel):
     # 空间维度
     bbox: Optional[List[float]] = Field(
         None,
-        description="地图框选或当前视窗范围 [min_lon, min_lat, max_lon, max_lat]"
+        description="地图框选或当前视窗范围[min_lon, min_lat, max_lon, max_lat]"
     )
 
     # [新增] 视图状态：保存当前的经纬度、缩放、仰角等，确保看板更新后视角不重置
@@ -73,6 +73,12 @@ class InteractionPayload(BaseModel):
     force_new: bool = Field(
         False,
         description="是否强制重新规划看板（即忽略现有布局，完全推翻重做）"
+    )
+
+    #[新增] 人机协同的模式决策字段
+    force_mode: Literal["auto", "edit", "generate"] = Field(
+        default="auto",
+        description="看板更新模式：'auto' 由 AI 判定，'edit' 强制修改现有代码，'generate' 强制从零生成。"
     )
 
     current_dashboard_id: Optional[str] = Field(None, description="当前页面正在显示的看板ID")

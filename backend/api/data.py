@@ -35,7 +35,7 @@ async def upload_data(
     LOADABLE_EXTENSIONS = ('.csv', '.parquet', '.shp', '.geojson', '.json')
 
     saved_paths = []
-    load_targets = []
+    load_targets =[]
     seen_vars = set()  # 用于检测变量名冲突
 
     try:
@@ -82,7 +82,7 @@ async def upload_data(
 
         # 3. 初始化 Session
         # 内部会触发 basic_stats 提取物理指纹（行列数、CRS、Bounds等）
-        logger.info(f">>> [Data] 开始为 Session {session_id} 初始化数据画像，目标文件数: {len(load_targets)}")
+        logger.info(f">>>[Data] 开始为 Session {session_id} 初始化数据画像，目标文件数: {len(load_targets)}")
         session_state = session_service.create_session(session_id, load_targets)
 
         return {
@@ -90,6 +90,7 @@ async def upload_data(
             "session_id": session_id,
             "datasets": [s["variable_name"] for s in session_state["summaries"]],
             "is_geospatial": any(s.get("is_geospatial") for s in session_state["summaries"]),
+            "data_profile": session_state["summaries"],  # [新增] 将数据基础分析/物理指纹返回给前端
             "ready": True
         }
 
